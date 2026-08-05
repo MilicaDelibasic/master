@@ -24,7 +24,8 @@ htmlcov/
 
 # IDE / OS
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 *.swp
 .DS_Store
 Thumbs.db
