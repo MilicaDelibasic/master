@@ -1,0 +1,23 @@
+---
+description: Master thesis project context — always read local plans/memory
+alwaysApply: true
+---
+
+# Master thesis (assembler) — standing context
+
+Before non-trivial work, read:
+
+1. `plans/MEMORY.md` — decisions, session log, how things were done
+2. `plans/MASTER_PLAN.md` — detailed plan and phases
+3. `plans/LATEX_SETUP.md` — when touching thesis LaTeX
+
+These files are **gitignored** (local only). If missing, recreate from conversation or ask the user.
+
+## Hard constraints
+
+- Thesis prose: **Serbian (Montenegro), Latinica**
+- Assembler: **Python 3.12**, hand-written two-pass (RV32I subset unless mentor says otherwise)
+- **Push** meaningful commits to `origin/main` (user requested active push)
+- Never commit `plans/`, `upustvo/` (copyrighted PDFs), `.venv`, or LaTeX build junk
+- Code/comments/commits: **English**; thesis text: **Serbian**
+- After meaningful decisions or implementations, **append** a dated note to `plans/MEMORY.md`

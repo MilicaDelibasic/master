@@ -1,0 +1,58 @@
+# Local planning & agent memory (not for remote)
+plans/
+
+# Faculty materials & copyrighted literature (local only)
+upustvo/
+
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# LaTeX build artifacts
+docs/thesis/**/*.aux
+docs/thesis/**/*.bbl
+docs/thesis/**/*.bcf
+docs/thesis/**/*.blg
+docs/thesis/**/*.fdb_latexmk
+docs/thesis/**/*.fls
+docs/thesis/**/*.log
+docs/thesis/**/*.out
+docs/thesis/**/*.synctex.gz
+docs/thesis/**/*.toc
+docs/thesis/**/*.lof
+docs/thesis/**/*.lot
+docs/thesis/**/*.nav
+docs/thesis/**/*.snm
+docs/thesis/**/*.vrb
+docs/thesis/**/*.run.xml
+docs/thesis/**/*-blx.bib
+
+# Assembler outputs (generated)
+*.o
+*.bin
+*.hex
+*.lst
+out/
+output/
