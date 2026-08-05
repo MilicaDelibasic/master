@@ -49,6 +49,8 @@ docs/thesis/**/*.snm
 docs/thesis/**/*.vrb
 docs/thesis/**/*.run.xml
 docs/thesis/**/*-blx.bib
+docs/thesis/**/*.pdf
+docs/thesis/**/*.synctex\(busy\)
 
 # Assembler outputs (generated)
 *.o
