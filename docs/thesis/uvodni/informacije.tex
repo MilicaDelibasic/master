@@ -1,28 +1,28 @@
-% Informacije o magistrandu, master radu i komisiji (Smjernice, tačka 2).
-\chapter*{Informacije o magistrandu, master radu i komisiji}
-\thispagestyle{plain}
+% Podaci i informacije o studentu, radu i odbrani (Smjernice, tačka 2; izgled kao u primjeru).
+\clearpage
+\thispagestyle{empty}
+\setlength{\parindent}{0pt}
+\newcommand{\podatak}[2]{\begin{minipage}[t]{0.45\textwidth}\raggedright #1\end{minipage}\hfill
+  \begin{minipage}[t]{0.5\textwidth}\raggedright #2\end{minipage}\par\vspace{1.2em}}
+\newcommand{\naslovpodataka}[1]{\vspace{1.5em}{\bfseries\MakeUppercase{#1}}\par\vspace{1.5em}}
 
-\section*{Podaci o magistrandu}
-\noindent\begin{tabularx}{\textwidth}{@{}lX@{}}
-  Ime i prezime: & \RadAutor \\
-  Datum i mjesto rođenja: & [\dots] \\
-  Završeni studijski program i godina završetka: & [\dots] \\
-\end{tabularx}
+\naslovpodataka{Podaci i informacije o studentu}
+\podatak{Ime i prezime:}{\RadAutor}
+\podatak{Datum i mjesto rođenja:}{[dd.mm.gggg. godine, mjesto, država]}
+\podatak{Naziv završenog osnovnog studijskog programa i godina završetka studija:}%
+        {[studijski program, fakultet, univerzitet, broj ECTS kredita, godina]}
 
-\section*{Podaci o master radu}
-\noindent\begin{tabularx}{\textwidth}{@{}lX@{}}
-  Naziv master studija: & \RadStudijskiProgram \\
-  Naslov rada: & \RadNaslov \\
-  Fakultet na kojem se rad brani: & \RadFakultet \\
-\end{tabularx}
+\naslovpodataka{Informacije o master radu}
+\podatak{Naziv master studija:}{\RadMasterStudije}
+\podatak{Naslov rada:}{\RadNaslov}
+\podatak{Fakultet na kojem je rad odbranjen:}{\RadFakultet, \RadUniverzitet}
 
-\section*{Podaci o komisiji, prijavi i odbrani}
-\noindent\begin{tabularx}{\textwidth}{@{}lX@{}}
-  Datum prijave master rada: & [\dots] \\
-  Datum sjednice Vijeća na kojoj je prihvaćena tema: & [\dots] \\
-  Mentor: & \RadMentor \\
-  Komisija za ocjenu rada: & [\dots] \\
-  Komisija za odbranu rada: & [\dots] \\
-  Lektor: & [\dots] \\
-  Datum odbrane: & [\dots] \\
-\end{tabularx}
+\naslovpodataka{UDK, ocjena i odbrana master rada}
+\podatak{Datum prijave master rada:}{[dd.mm.gggg. godine]}
+\podatak{Datum sjednice Vijeća na kojoj je prihvaćena tema i mentor:}{[dd.mm.gggg. godine]}
+\podatak{Komisija za ocjenu/odbranu rada:}%
+        {1. [zvanje, ime i prezime, institucija], predsjednik,\\
+         2. \RadMentor, mentor,\\
+         3. [zvanje, ime i prezime, institucija], član.}
+\podatak{Datum odbrane:}{\rule{6cm}{0.4pt}}
+\setlength{\parindent}{1.27cm}

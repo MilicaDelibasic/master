@@ -1,27 +1,28 @@
-% Korice i naslovna strana (po Smjernicama naslovna strana je identična koricama).
-% Logo: staviti fajl slike/logo-ucg.png (ili .pdf) — dok ga nema, prikazuje se okvir.
-\begin{titlepage}
-  \centering
-  \IfFileExists{slike/logo-ucg.png}%
-    {\includegraphics[height=3cm]{logo-ucg.png}}%
-    {\fbox{\parbox[c][3cm][c]{3cm}{\centering\small Logo UCG}}}
-  \par\vspace{1em}
-  {\large\MakeUppercase{\RadUniverzitet}\par}
-  {\large\MakeUppercase{\RadFakultet}\par}
-  \vspace{0.5em}
-  {\normalsize \RadStudijskiProgram\par}
+% Korice i naslovna strana — identične (Smjernice), izgled kao u primjeru ETF-a.
+\newcommand{\RadKorice}{%
+  \begin{titlepage}
+    \setstretch{1.2}
+    \centering
+    \begin{minipage}[c]{0.24\textwidth}\centering
+      \includegraphics[height=2.4cm]{logo-ucg.png}
+    \end{minipage}%
+    \begin{minipage}[c]{0.5\textwidth}\centering
+      \textsc{\RadUniverzitet}\\[0.5em]
+      \textsc{\RadFakultet}
+    \end{minipage}%
+    \begin{minipage}[c]{0.24\textwidth}\centering
+      \ifx\RadLogoFakulteta\empty\else\includegraphics[height=2.2cm]{\RadLogoFakulteta}\fi
+    \end{minipage}
 
-  \vfill
-  {\large \RadAutor\par}
-  \vspace{2em}
-  {\LARGE\bfseries \RadNaslov\par}
-  \vspace{1.5em}
-  {\large \MakeUppercase{\RadVrsta}\par}
-  \vfill
-
-  \begin{flushright}
-    Mentor: \RadMentor
-  \end{flushright}
-  \vspace{2em}
-  {\RadMjesto, \RadGodina\par}
-\end{titlepage}
+    \vspace*{\fill}
+    {\RadZvanje\ \RadAutor\par}
+    \vspace{2.5em}
+    {\bfseries\MakeUppercase{\RadNaslov}\par}
+    \vspace{1em}
+    {MASTER RAD\par}
+    \vspace*{\fill}
+    \vspace*{\fill}
+    {\RadMjesto, \RadGodina. godine\par}
+  \end{titlepage}}
+\RadKorice
+\RadKorice

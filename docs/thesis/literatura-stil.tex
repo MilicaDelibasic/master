@@ -1,0 +1,51 @@
+% =====================================================================
+%  Literatura u APA obliku, kao u master-primjer.pdf:
+%   u tekstu:  (Aho et al., 2006), (Patterson & Hennessy, 2020)
+%   spisak:    1. Aho, A. V., Lam, M. S., Sethi, R., & Ullman, J. D. (2006). Naslov. Izdavač.
+%   podnaslovi spiska ("knjige i članci", "Internet izvori") centrirani, numeracija od 1.
+% =====================================================================
+
+% Veznici i skraćenice kao u APA stilu (i u srpskom tekstu primjera)
+\DefineBibliographyStrings{serbian}{
+  andothers = {et al\adddot},
+  and       = {\&},
+  urlseen   = {pristupljeno},
+  edition   = {izd\adddot},
+}
+% U tekstu: (Patterson & Hennessy, 2020); u spisku (APA): Patterson, D. A., & Hennessy, J. L.
+\DeclareDelimFormat{finalnamedelim}{\addspace\&\space}
+\DeclareDelimFormat[bib,biblist]{finalnamedelim}{\addcomma\space\&\space}
+\renewcommand*{\nameyeardelim}{\addcomma\space}
+\DeclareNameAlias{sortname}{family-given}
+\DeclareNameAlias{default}{family-given}
+
+% Godina bez tačke: (2006), ne (2006.) — serbian.lbx dodaje tačku iza godine
+\DefineBibliographyExtras{serbian}{%
+  \protected\def\mkbibdatelong#1#2#3{%
+    \iffieldundef{#3}{}{\mkbibordinal{\thefield{#3}}\iffieldundef{#2}{}{\nobreakspace}}%
+    \iffieldundef{#2}{}{\mkbibmonth{\thefield{#2}}\iffieldundef{#1}{}{\space}}%
+    \iffieldbibstring{#1}{\bibstring{\thefield{#1}}}{\dateeraprintpre{#1}\mkyearzeros{\thefield{#1}}}}%
+  \protected\def\mkbibdateshort#1#2#3{%
+    \iffieldundef{#3}{}{\mkbibordinal{\thefield{#3}}\iffieldundef{#2}{}{\bibdatesep}}%
+    \iffieldundef{#2}{}{\mkbibordinal{\thefield{#2}}\iffieldundef{#1}{}{\bibdatesep}}%
+    \iffieldbibstring{#1}{\bibstring{\thefield{#1}}}{\dateeraprintpre{#1}\mkyearzeros{\thefield{#1}}}}%
+}
+
+% Internet izvori: "…, https://…, pristupljeno: 27. oktobar 2026."
+\DeclareFieldFormat{url}{\url{#1}}
+\AtBeginDocument{\urlstyle{same}}
+\DeclareFieldFormat{urldate}{\bibstring{urlseen}\addcolon\space#1}
+\renewbibmacro*{url+urldate}{%
+  \printfield{url}%
+  \iffieldundef{urlyear}{}{\setunit{\addcomma\space}\printurldate}}
+
+% Naslovi knjiga kurzivom, naslovi radova bez navodnika
+\DeclareFieldFormat[article,inproceedings,incollection]{title}{#1}
+
+% Numerisani spisak, podnaslovi centrirani
+\defbibenvironment{bibliography}
+  {\begin{enumerate}[label=\arabic*., leftmargin=0.9cm, labelwidth=0.7cm, labelsep=0.2cm,
+                     align=left, itemsep=2pt]}
+  {\end{enumerate}}
+  {\item}
+\defbibheading{subbibliography}[]{\par\begin{center}#1\end{center}}

@@ -4,6 +4,9 @@ plans/
 # Faculty materials & copyrighted literature (local only)
 upustvo/
 
+# Reference thesis used as a layout model (someone else's work, personal data)
+master-primjer.pdf
+
 # Python
 .venv/
 venv/
@@ -30,6 +33,7 @@ htmlcov/
 .DS_Store
 Thumbs.db
 desktop.ini
+~$*
 
 # LaTeX build artifacts
 docs/thesis/**/*.aux
