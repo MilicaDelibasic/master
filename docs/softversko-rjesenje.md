@@ -3,9 +3,9 @@
 Dvoprolazni asembler za podskup RISC-V arhitekture (RV32I), napisan u Python-u 3.12.
 
 > **Stanje (27. 10. 2026.):** urađeni su kostur paketa, komandna linija, tabela simbola,
-> zapis izlaznih fajlova, **leksički analizator** i **tabela instrukcija i registara**
-> (133 testa prolaze). Parser, oba prolaza i kodiranje I/S/B/U/J formata još nisu
-> napisani — to je plan iz odjeljka 7.
+> zapis izlaznih fajlova, **leksički analizator**, **tabela instrukcija i registara** i
+> **kodiranje svih šest formata** sa provjerom opsega (217 testova prolazi). Parser i oba
+> prolaza još nisu napisani — to je plan iz odjeljka 7.
 
 ---
 
@@ -64,7 +64,7 @@ prolazi kroz program **dva puta**:
 | `parser.py` | tokeni → lista stavki programa | ⏳ |
 | `symbols.py` | tabela simbola (definiši, pronađi, prijavi duplikat/nedefinisanu labelu) | ✅ |
 | `isa.py` | tabela instrukcija: format, opcode, funct3, funct7, oblik operanada; mapa registara | ✅ |
-| `encode.py` | pakovanje polja u 32-bitnu riječ za formate R, I, S, B, U, J | ⏳ (R gotov) |
+| `encode.py` | pakovanje polja u 32-bitnu riječ za formate R, I, S, B, U, J; provjera opsega; `hi`/`lo` podjela | ✅ |
 | `directives.py` | značenje direktiva (`.text`, `.data`, `.word`, …) | ⏳ |
 | `assembler.py` | povezuje sve: parser → prvi prolaz → drugi prolaz | ⏳ |
 | `output.py` | zapis `.bin` (little-endian) i `.hex` | ✅ |
@@ -341,7 +341,7 @@ Svaki korak se završava testovima (`pytest`) i commit-om.
 |---|---|---|---|
 | 1 | ✅ Lexer | `lexer.py`, `tests/test_lexer.py` | 50 testova prolazi |
 | 2 | ✅ Tabela instrukcija i registara | `isa.py`, `tests/test_isa.py` | 74 testa: svaki mnemonik iz 3.2 ima format/opcode/funct3/funct7, kodiranja jedinstvena; `x0..x31`, ABI imena i `fp` daju 0–31 |
-| 3 | **Kodiranje svih formata** | `encode.py`, `tests/test_encode.py` | `encode_i/s/b/u/j` + provjera opsega; testovi sa poznatim riječima (tabela u odjeljku 5, uključujući negativne pomjeraje) |
+| 3 | ✅ Kodiranje svih formata | `encode.py`, `tests/test_encode.py` | 84 testa: poznate riječi (odjeljak 5, negativni pomjeraji), svi pomjeraji grana i uzorak skokova dekodirani nazad, granice opsega, `split_hi_lo` |
 | 4 | **Parser** | `parser.py`, `ast_nodes.py` (dodati tip `Operand`), `tests/test_parser.py` | sva tri primjera se parsiraju; greške za loš red imaju tačnu lokaciju |
 | 5 | **Prvi prolaz** | `assembler.py`, `directives.py`, `tests/test_assembler.py` | tabela simbola za `loop.asm` daje `loop = 0x08`; duple labele i nepoznate instrukcije prijavljene |
 | 6 | **Drugi prolaz + pseudo-instrukcije** | `assembler.py`, `encode.py` | `assemble_source` vraća tačne riječi za `add/loop/memory.asm` (odjeljak 5) |
