@@ -24,5 +24,7 @@ class TokenKind(Enum):
 @dataclass(frozen=True, slots=True)
 class Token:
     kind: TokenKind
-    lexeme: str
+    lexeme: str  # exact source text of the token
     location: SourceLocation
+    # Decoded value: int for INTEGER, unescaped str for STRING, None otherwise.
+    value: int | str | None = None
