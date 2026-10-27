@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-# Placeholder opcode map — filled when the ISA table is frozen (Phase 1).
-# Values are illustrative stubs until encode() is implemented.
-OPCODES: dict[str, int] = {}
+# Opcode/funct tables live in asm.isa (single source of truth).
 
 
 def encode_r(opcode: int, rd: int, funct3: int, rs1: int, rs2: int, funct7: int) -> int:
