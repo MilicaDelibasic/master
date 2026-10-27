@@ -1,0 +1,345 @@
+% =====================================================================
+%  Pregled teme master rada — kratak dokument za prvi uvid mentora.
+%  Build: lualatex pregled-teme.tex (dva puta, zbog brojeva tabela)
+%  Brojevi u tabelama 1–3 odgovaraju stanju repozitorijuma na dan pisanja.
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setmonofont{Consolas}[Scale=0.88]
+\usepackage[main=serbian]{babel}
+\usepackage{setspace}
+\setstretch{1.25}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\usepackage{graphicx}
+\graphicspath{{../thesis/slike/}}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{enumitem}
+\setlist{itemsep=3pt}
+\usepackage{xcolor}
+\usepackage{caption}
+\captionsetup{labelsep=colon}
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat*{\subsection}{\normalfont\large\bfseries}
+\setcounter{secnumdepth}{1}  % podnaslovi u odjeljku 4 bez broja, kao u primjeru
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[R]{\thepage}\renewcommand{\headrulewidth}{0pt}}
+\usepackage[hidelinks]{hyperref}
+
+\addto\captionsserbian{\renewcommand{\tablename}{Tabela}}
+\newcommand{\kod}[1]{\texttt{#1}}
+
+\begin{document}
+
+% --- Naslovni blok -------------------------------------------------------
+\begin{center}
+  \includegraphics[height=1.6cm]{logo-ucg.png}\par\vspace{1.2em}
+  UNIVERZITET CRNE GORE\\
+  ELEKTROTEHNIČKI FAKULTET\par\vspace{1.6em}
+  {\LARGE\bfseries Pregled teme master rada\par}\vspace{1.2em}
+  {\large Dizajn i implementacija jednostavnog asemblerskog prevodioca\\
+          za prostu arhitekturu (podskup RISC-V RV32I)\par}\vspace{1.4em}
+  Milica Delibašić\par\vspace{0.8em}
+  Podgorica, oktobar 2026.
+\end{center}
+
+\vspace{0.5em}
+\noindent\rule{\textwidth}{0.6pt}
+{\itshape Ovaj dokument je kratak pregled teme, pripremljen radi prvog uvida. Nije skraćena
+verzija rada: sadrži ideju, ono što je do sada implementirano i provjereno, predloženu
+strukturu rada i spisak onoga što ostaje.\par}
+\noindent\rule{\textwidth}{0.6pt}
+
+% =====================================================================
+\section{Tema i problem}
+
+Tema je projektovanje i implementacija jednostavnog \emph{dvoprolaznog asemblera}: programa
+koji prihvata izvorni kod napisan na asemblerskom jeziku i prevodi ga u mašinski kod. Za ciljnu
+arhitekturu izabran je osnovni cjelobrojni skup instrukcija RISC-V arhitekture (RV32I), otvorene
+arhitekture sa malim brojem pravilnih formata instrukcija, koja se sve više koristi i u industriji
+i u nastavi.
+
+Polazno zapažanje je sljedeće. Industrijski asembleri, poput GNU asemblera, pouzdano prevode
+programe, ali su veliki i složeni alati čija unutrašnja struktura nije pogodna za upoznavanje sa
+principima prevođenja. Obrazovni simulatori su usmjereni na \emph{izvršavanje} programa, a sam
+postupak \emph{prevođenja} ostaje u pozadini:
+
+\begin{itemize}
+  \item nije vidljivo kako asembler rješava \emph{reference unaprijed}, tj.\ upotrebu labele
+        koja je definisana tek kasnije u programu;
+  \item kodiranje instrukcije u bitska polja, posebno kod grana i skokova, gdje su bitovi
+        pomjeraja ispremještani, prikazuje se samo kao gotova heksadecimalna riječ;
+  \item faze prevodioca iz teorije (leksička, sintaksna, semantička analiza i generisanje koda)
+        nisu jasno razdvojene u kodu postojećih alata.
+\end{itemize}
+
+Problem koji rad obrađuje je, dakle, kako napraviti asembler koji je dovoljno mali da se može
+u potpunosti opisati i razumjeti, a dovoljno potpun da prevodi smislene programe (labele, podaci,
+grananja, petlje, pristup memoriji), uz jasne poruke o greškama i uz mašinski kod koji se može
+provjeriti poređenjem sa referentnim asemblerom.
+
+% =====================================================================
+\section{Istraživačka pitanja}
+
+\textbf{Glavno pitanje.} Na koji način se može projektovati i implementirati jednostavan
+dvoprolazni asemblerski prevodilac za podskup RISC-V arhitekture (RV32I) tako da generiše
+ispravan mašinski kod i daje razumljive dijagnostičke poruke o greškama?
+
+\textbf{P1.} Koji minimalni skup instrukcija, direktiva i pseudo-instrukcija RV32I arhitekture
+je dovoljan za pisanje smislenih programa (aritmetika, grananje, petlje, pristup memoriji)?
+
+\textbf{P2.} Kako se klasične faze prevodioca preslikavaju na arhitekturu dvoprolaznog asemblera
+i koje su posebnosti obrade referenci unaprijed kod grana i skokova?
+
+\textbf{P3.} U kojoj mjeri se mašinski kod razvijenog asemblera poklapa sa kodom referentnog
+asemblera (GNU \kod{as}) za isti ulazni program?
+
+% =====================================================================
+\section{Šta je do sada implementirano}
+
+Rješenje se razvija u jeziku Python~3.12, bez spoljnih biblioteka, kao alat komandne linije
+(\kod{python -m asm program.asm -o out/}). Svaka faza prevodioca je zaseban modul.
+Implementirani su leksički analizator, tabela instrukcija i registara, kodiranje svih šest
+formata instrukcija sa provjerom opsega, tabela simbola, zapis izlaznih fajlova i komandna
+linija. Parser i dva prolaza su projektovani (algoritam i gramatika su definisani), ali još nisu
+napisani.
+
+\begin{table}[h]
+  \centering
+  \caption{Obim podržanog instrukcijskog skupa}
+  \begin{tabularx}{0.82\textwidth}{@{}lXr@{}}
+    \toprule
+    \textbf{Format} & \textbf{Grupe instrukcija} & \textbf{Broj} \\
+    \midrule
+    R & aritmetika, logika, pomjeranja i poređenja nad registrima & 10 \\
+    I & aritmetika i logika sa konstantom, pomjeranja za konstantu,
+        učitavanje iz memorije, skok kroz registar & 15 \\
+    S & upis u memoriju & 3 \\
+    B & uslovna grananja & 6 \\
+    U & gornja konstanta (\kod{lui}, \kod{auipc}) & 2 \\
+    J & bezuslovni skok (\kod{jal}) & 1 \\
+    \midrule
+    \multicolumn{2}{@{}l}{Nativnih instrukcija ukupno (implementirano)} & 37 \\
+    \multicolumn{2}{@{}l}{Pseudo-instrukcija (\kod{nop mv not j ret li la}; planirano)} & 7 \\
+    \multicolumn{2}{@{}l}{Direktiva asemblera (\kod{.text .data .word .byte} \dots; planirano)} & 7 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{Stanje po modulima}
+  \begin{tabularx}{0.9\textwidth}{@{}llX@{}}
+    \toprule
+    \textbf{Modul} & \textbf{Stanje} & \textbf{Uloga} \\
+    \midrule
+    \kod{lexer.py}    & gotovo   & tekst $\rightarrow$ tokeni, sa linijom i kolonom svakog tokena \\
+    \kod{isa.py}      & gotovo   & tabela instrukcija (format, opcode, funct3, funct7) i registara \\
+    \kod{encode.py}   & gotovo   & pakovanje polja u 32-bitnu riječ za formate R/I/S/B/U/J \\
+    \kod{symbols.py}  & gotovo   & tabela simbola, dupla i nedefinisana labela \\
+    \kod{output.py}   & gotovo   & binarni (little-endian) i heksadecimalni izlaz \\
+    \kod{cli.py}      & gotovo   & komandna linija \\
+    \kod{parser.py}   & sljedeće & tokeni $\rightarrow$ labele, direktive, instrukcije \\
+    \kod{assembler.py}& planirano& prvi prolaz (adrese, simboli) i drugi prolaz (kodiranje) \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% =====================================================================
+\section{Ideja na konkretnom primjeru}
+
+Pošto je cilj rada da postupak prevođenja bude jasan, ideja se najkraće objašnjava primjerom.
+Riječi mašinskog koda u ovom odjeljku proizvodi već implementirani modul za kodiranje.
+
+\subsection{Dva prolaza i reference unaprijed}
+
+\begin{center}
+\begin{minipage}[t]{0.3\textwidth}
+\small
+\begin{verbatim}
+    addi t0, x0, 0
+    addi t1, x0, 10
+loop:
+    addi t0, t0, 1
+    blt  t0, t1, loop
+\end{verbatim}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.66\textwidth}
+\small
+\begin{tabular}{@{}lll@{}}
+  \toprule
+  \textbf{Adresa} & \textbf{Instrukcija} & \textbf{Riječ} \\
+  \midrule
+  \kod{0x00} & \kod{addi t0, x0, 0}   & \kod{0x00000293} \\
+  \kod{0x04} & \kod{addi t1, x0, 10}  & \kod{0x00A00313} \\
+  \kod{0x08} & \kod{addi t0, t0, 1}   & \kod{0x00128293} \\
+  \kod{0x0C} & \kod{blt t0, t1, loop} & \kod{0xFE62CEE3} \\
+  \bottomrule
+\end{tabular}
+\end{minipage}
+\end{center}
+
+U \emph{prvom prolazu} asembler samo računa adrese: brojač lokacija raste za 4 po instrukciji, a
+labela \kod{loop} upisuje se u tabelu simbola sa adresom \kod{0x08}. Ništa se još ne prevodi.
+U \emph{drugom prolazu}, kada su sve adrese poznate, svaka instrukcija se kodira. Za granu
+\kod{blt} upisuje se \emph{razlika} adresa, $\kod{0x08} - \kod{0x0C} = -4$, a ne sama adresa
+labele (PC-relativno adresiranje). Da je labela definisana tek poslije grane, postupak bi bio isti,
+jer je prvi prolaz već završen.
+
+\subsection{Rastavljanje instrukcije na bitska polja}
+
+Instrukcija \kod{add x3, x1, x2} kodira se u riječ \kod{0x002081B3}, po R formatu:
+
+\begin{center}
+\small
+\begin{tabular}{@{}cccccc@{}}
+  \toprule
+  \kod{funct7} & \kod{rs2} & \kod{rs1} & \kod{funct3} & \kod{rd} & \kod{opcode} \\
+  \midrule
+  \kod{0000000} & \kod{00010} & \kod{00001} & \kod{000} & \kod{00011} & \kod{0110011} \\
+  0 & 2 (\kod{x2}) & 1 (\kod{x1}) & 0 & 3 (\kod{x3}) & \kod{0x33} \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+Kod grane \kod{blt t0, t1, loop} pomjeraj $-4$ zapisuje se kao 13-bitni broj, a njegovi bitovi se
+raspoređuju po B formatu na neuzastopna mjesta u riječi:
+
+\begin{center}
+\small
+\begin{tabular}{@{}cccccccc@{}}
+  \toprule
+  \kod{imm[12]} & \kod{imm[10:5]} & \kod{rs2} & \kod{rs1} & \kod{funct3} & \kod{imm[4:1]} & \kod{imm[11]} & \kod{opcode} \\
+  \midrule
+  \kod{1} & \kod{111111} & \kod{00110} & \kod{00101} & \kod{100} & \kod{1110} & \kod{1} & \kod{1100011} \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Dijagnostika sa tačnom lokacijom}
+
+Svaka greška nosi fajl, liniju i kolonu i prijavljuje se u fazi u kojoj nastaje. Primjeri stvarnog
+izlaza trenutne implementacije:
+
+\begin{center}
+\begin{minipage}{0.92\textwidth}
+\small
+\begin{verbatim}
+primjer.asm:1:14: lexical error: invalid integer literal '12abc'
+primjer.asm:1:9: lexical error: unterminated string literal
+primjer.asm:4:5: semantic error: immediate 5000 out of range (-2048..2047)
+primjer.asm:9:5: semantic error: branch offset 4100 out of range (-4096..4095)
+primjer.asm:12:5: semantic error: shift amount 40 out of range (0..31)
+\end{verbatim}
+\end{minipage}
+\end{center}
+
+% =====================================================================
+\section{Verifikacija}
+
+Ispravnost se provjerava automatizovanim testovima (\kod{pytest}). Očekivane vrijednosti
+kodiranja izvedene su nezavisno, iz definicije bitskih polja u specifikaciji RISC-V, a ne iz
+izlaza same implementacije, da bi test mogao otkriti grešku, a ne samo promjenu ponašanja.
+Za grane je svaki od 4096 mogućih pomjeraja kodiran i zatim vraćen nezavisnim dekoderom.
+
+\begin{table}[h]
+  \centering
+  \caption{Automatizovani testovi}
+  \begin{tabularx}{0.85\textwidth}{@{}lrY@{}}
+    \toprule
+    \textbf{Skup} & \textbf{Broj} & \textbf{Predmet provjere} \\
+    \midrule
+    Leksička analiza            & 50  & tokeni, brojevi, stringovi, lokacije, greške \\
+    Tabela instrukcija          & 74  & polja prema specifikaciji, jedinstvenost kodiranja, registri \\
+    Kodiranje instrukcija       & 85  & poznate riječi svih šest formata, granice opsega \\
+    Paket i komandna linija     & 8   & izlazni fajlovi, poruke, tabela simbola \\
+    \midrule
+    Ukupno                      & 217 & svi prolaze \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Kada parser i dva prolaza budu završeni, dodaju se integracioni testovi nad kompletnim
+programima (petlja, grananje, rad sa memorijom, poziv funkcije) i poređenje mašinskog koda sa
+izlazom GNU asemblera (\kod{riscv64-unknown-elf-as}) za iste programe.
+
+% =====================================================================
+\section{Predložena struktura rada i trenutni status}
+
+Struktura rada prati uputstvo za temu, a izgled je usklađen sa odobrenim master radovima
+Elektrotehničkog fakulteta (margine, font, prored, numeracija, redoslijed uvodnih strana).
+Pisani dio za sada postoji kao skelet: naslovi svih poglavlja i sekcija, sa bilješkama o sadržaju.
+
+\begin{table}[h]
+  \centering
+  \caption{Status po poglavljima}
+  \begin{tabularx}{\textwidth}{@{}L{6.2cm}lY@{}}
+    \toprule
+    \textbf{Poglavlje} & \textbf{Status} & \textbf{Napomena} \\
+    \midrule
+    Uvod & skelet & predmet, cilj i istraživačka pitanja preuzimaju se iz prijave \\
+    1. Osnove računarskih arhitektura i asemblera & skelet & literatura izabrana \\
+    2. Teorijske osnove prevodilaca & skelet & literatura izabrana \\
+    3. Specifikacija jednostavne arhitekture & djelimično & tabele formata i opkodova gotove \\
+    4. Projektovanje asemblerskog jezika & djelimično & gramatika (EBNF) i leksička pravila definisani \\
+    5. Dizajn i implementacija & prati kod & sekcije odgovaraju modulima \\
+    6. Praktična realizacija i primjeri & čeka kod & poslije drugog prolaza \\
+    7. Evaluacija i diskusija & čeka kod & poslije poređenja sa GNU \kod{as} \\
+    Zaključak & — & na kraju \\
+    Prilozi & djelimično & izvorni kod i tabela opkodova uključuju se automatski \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% =====================================================================
+\section{Šta ostaje}
+
+\begin{enumerate}
+  \item \textbf{Parser} --- prevođenje tokena u labele, direktive i instrukcije po definisanoj gramatici.
+  \item \textbf{Prvi i drugi prolaz} --- dodjela adresa, tabela simbola, kodiranje,
+        proširenje pseudo-instrukcija (\kod{li}, \kod{la}, \kod{j}, \kod{ret}, \dots) i direktive za podatke.
+  \item \textbf{Izlaz za sekciju podataka} i završetak komandne linije (opciono: listing asembliranja).
+  \item \textbf{Integracioni testovi i poređenje sa GNU asemblerom} --- odgovor na pitanje P3.
+  \item \textbf{Pisanje teksta rada} --- teorijska poglavlja paralelno sa kodom, zatim evaluacija i zaključak.
+  \item Vaše korekcije na prijavi teme i na predloženoj strukturi rada.
+  \item Dopuna podataka: broj indeksa, tačan naziv studijskog programa i podaci o mentoru.
+\end{enumerate}
+
+% =====================================================================
+\section{Literatura (izbor)}
+
+\begin{enumerate}[label=\arabic*., leftmargin=1.6em]
+  \item Aho A. V., Lam M. S., Sethi R., Ullman J. D., \emph{Compilers: Principles, Techniques,
+        and Tools}, 2.~izd., Pearson/Addison-Wesley, 2006.
+  \item Beck L. L., \emph{System Software: An Introduction to Systems Programming}, 3.~izd.,
+        Addison-Wesley, 1997.
+  \item Waterman A., Asanović K. (ur.), \emph{The RISC-V Instruction Set Manual, Volume I:
+        Unprivileged ISA}, verzija 20191213, RISC-V Foundation, 2019.
+  \item Patterson D. A., Hennessy J. L., \emph{Computer Organization and Design RISC-V Edition:
+        The Hardware/Software Interface}, 2.~izd., Morgan Kaufmann, 2020.
+  \item Patterson D., Waterman A., \emph{The RISC-V Reader: An Open Architecture Atlas},
+        Strawberry Canyon, 2017.
+  \item Waterman A., \emph{Design of the RISC-V Instruction Set Architecture}, doktorska
+        disertacija, University of California, Berkeley, 2016.
+  \item Salomon D., \emph{Assemblers and Loaders}, Ellis Horwood, 1993.
+  \item Nystrom R., \emph{Crafting Interpreters}, Genever Benning, 2021.
+  \item Petersen M. B., „Ripes: A Visual Computer Architecture Simulator”, \emph{IEEE/ACM
+        Workshop on Computer Architecture Education (WCAE)}, 2021.
+  \item Free Software Foundation, \emph{Using as: The GNU Assembler}, dokumentacija GNU Binutils.
+\end{enumerate}
+
+\end{document}
