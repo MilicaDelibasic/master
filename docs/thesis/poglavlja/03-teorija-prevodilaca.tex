@@ -1,0 +1,41 @@
+\chapter{Teorijske osnove prevodilaca}
+\label{ch:teorija}
+
+\napomena{Teorijsko poglavlje, 10--12 strana. Uputstvo: „ovdje će trebati istraživanja”.
+Glavni izvori: \textcite{aho2006} (pogl.\ 1--6), \textcite{beck1997} (pogl.\ 1--2),
+\textcite{cooper2023}, \textcite{nystrom2021}.}
+
+\section{Vrste prevodilaca}
+\label{sec:vrste-prevodilaca}
+\napomena{Kompajler, interpreter, asembler, (dis)asembler, kros-prevodilac; jednoprolazni
+i višeprolazni prevodioci.}
+
+\section{Struktura prevodioca}
+\label{sec:struktura-prevodioca}
+\napomena{Faze: front-end (analiza) i back-end (sinteza); tabela simbola kao zajednička
+struktura. Dijagram faza.}
+
+\section{Leksička analiza}
+\label{sec:teorija-leksicka}
+\napomena{Tokeni, lekseme, obrasci; regularni izrazi i konačni automati;
+ručno pisani skener naspram generatora (lex/flex).}
+
+\section{Sintaksna analiza}
+\label{sec:teorija-sintaksna}
+\napomena{Kontekstno-slobodne gramatike, BNF/EBNF, stabla parsiranja;
+silazno (rekurzivno spuštanje) i uzlazno parsiranje.}
+
+\section{Semantička analiza}
+\label{sec:teorija-semanticka}
+\napomena{Provjere značenja: definisanost simbola, opsezi vrijednosti, tipovi operanada;
+kod asemblera: nedefinisane/duplirane labele, neposredne vrijednosti van opsega.}
+
+\section{Generisanje mašinskog koda}
+\label{sec:teorija-generisanje}
+\napomena{Kod asemblera: kodiranje instrukcija u bitska polja; dvoprolazni postupak
+i reference unaprijed \parencite{beck1997}; jednoprolazni asembler sa „backpatching”-om.}
+
+\section{Obrada grešaka}
+\label{sec:teorija-greske}
+\napomena{Vrste grešaka (leksičke, sintaksne, semantičke), lokacija greške,
+strategije oporavka (panic mode, nastavak na sljedećoj liniji).}

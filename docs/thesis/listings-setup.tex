@@ -1,0 +1,37 @@
+% =====================================================================
+%  Podešavanje listinga koda (Python i RISC-V asembler)
+% =====================================================================
+\lstset{
+  basicstyle=\ttfamily\footnotesize\singlespacing,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  frame=single,
+  rulecolor=\color{gray!60},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  tabsize=4,
+  extendedchars=true,
+  keywordstyle=\bfseries\color{blue!60!black},
+  commentstyle=\itshape\color{green!40!black},
+  stringstyle=\color{red!50!black},
+  literate={—}{{---}}1 {→}{{$\rightarrow$}}1,
+}
+
+% Podskup RV32I + pseudo-instrukcije + direktive
+\lstdefinelanguage{rvasm}{
+  sensitive=false,
+  morekeywords={add,sub,and,or,xor,sll,srl,sra,slt,sltu,
+                addi,andi,ori,xori,slti,sltiu,slli,srli,srai,
+                lw,sw,lb,sb,jalr,beq,bne,blt,bge,bltu,bgeu,lui,auipc,jal,
+                nop,li,la,mv,j,ret},
+  morekeywords=[2]{.text,.data,.word,.byte,.ascii,.asciiz,.space},
+  keywordstyle=[2]\color{purple!70!black},
+  morecomment=[l]{\#},
+  morestring=[b]",
+  alsoletter={.},
+}
+
+\lstdefinestyle{python}{language=Python}
+\lstdefinestyle{asm}{language=rvasm}

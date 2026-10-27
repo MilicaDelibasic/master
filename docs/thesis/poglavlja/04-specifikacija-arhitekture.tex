@@ -1,0 +1,58 @@
+\chapter{Specifikacija jednostavne arhitekture}
+\label{ch:specifikacija}
+
+\napomena{Specifikacija ciljne arhitekture: podskup RV32I. 8--10 strana.
+Izvor: \textcite{waterman2019}. Mora se poklapati sa \texttt{src/asm/encode.py}.}
+
+\section{Definisanje arhitekture sistema}
+\label{sec:definisanje-arhitekture}
+\napomena{32-bitna load/store arhitektura; koji dio RV32I se podržava i šta je izostavljeno
+(npr.\ \texttt{fence}, \texttt{ecall}, CSR instrukcije).}
+
+\section{Organizacija memorije}
+\label{sec:memorija}
+\napomena{Bajtno adresiranje, little-endian, poravnanje riječi; raspored sekcija
+\texttt{.text} i \texttt{.data} (početne adrese).}
+
+\section{Registri procesora}
+\label{sec:registri}
+\napomena{32 registra \texttt{x0}--\texttt{x31}, \texttt{x0} uvijek nula, PC;
+tabela ABI imena (\texttt{zero}, \texttt{ra}, \texttt{sp}, \texttt{t0}--\texttt{t6}, \texttt{s0}--\texttt{s11}, \texttt{a0}--\texttt{a7}).}
+
+\section{Format instrukcija}
+\label{sec:format-instrukcija}
+\napomena{Opisati svaki format i raspored bitova neposredne vrijednosti (posebno B i J).}
+
+\begin{table}[H]
+  \centering
+  \caption{Formati instrukcija RV32I (bitska polja, od bita 31 do bita 0)}
+  \label{tab:formati}
+  \small
+  \begin{tabular}{@{}lllllll@{}}
+    \toprule
+    Format & 31--25 & 24--20 & 19--15 & 14--12 & 11--7 & 6--0 \\
+    \midrule
+    R & funct7 & rs2 & rs1 & funct3 & rd & opcode \\
+    I & \multicolumn{2}{l}{imm[11:0]} & rs1 & funct3 & rd & opcode \\
+    S & imm[11:5] & rs2 & rs1 & funct3 & imm[4:0] & opcode \\
+    B & imm[12|10:5] & rs2 & rs1 & funct3 & imm[4:1|11] & opcode \\
+    U & \multicolumn{4}{l}{imm[31:12]} & rd & opcode \\
+    J & \multicolumn{4}{l}{imm[20|10:1|11|19:12]} & rd & opcode \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Skup podržanih instrukcija}
+\label{sec:skup-instrukcija}
+\napomena{Kratak pregled po grupama (aritmetičke, logičke, pomjeranja, memorijske, grananja,
+skokovi); kompletna tabela opkodova je u Prilogu~\ref{sec:prilog-tabela}.}
+
+\section{Načini adresiranja}
+\label{sec:adresiranje}
+\napomena{Registarsko, neposredno, bazno sa pomjerajem (\texttt{lw t1, 8(sp)}),
+PC-relativno (grane, \texttt{jal}, \texttt{auipc}).}
+
+\section{Primjer izvršavanja instrukcija}
+\label{sec:primjer-izvrsavanja}
+\napomena{Ručno kodiranje 2--3 instrukcije korak po korak, npr.\
+\texttt{add x3, x1, x2} → \texttt{0x002081B3}; jedna I-tip i jedna B-tip instrukcija.}

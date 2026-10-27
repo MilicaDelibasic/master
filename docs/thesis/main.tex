@@ -1,31 +1,107 @@
-\documentclass[12pt,a4paper]{report}
+% =====================================================================
+%  Master rad — glavni fajl
+%  Build: lualatex → biber → lualatex → lualatex
+%  (VS Code: recept "lualatex -> biber -> lualatex x2")
+% =====================================================================
+\documentclass[12pt,a4paper,oneside]{report}
 
+% --- Tehničke karakteristike po Smjernicama UCG --------------------
+% margine: lijeva 2,5 cm, ostale 2 cm; Times New Roman 12 (fusnote 10);
+% prored 1,5; obostrano poravnanje; broj stranice dolje desno.
+\usepackage[left=2.5cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \usepackage{fontspec}
-\usepackage[main=serbian]{babel}
-\usepackage{hyperref}
-
 \setmainfont{Times New Roman}
-\setmonofont{Consolas}
+\setmonofont{Consolas}[Scale=0.9]
+\usepackage[english,main=serbian]{babel}
+\usepackage{setspace}
+\onehalfspacing
 
-\title{Test kompilacije --- Master rad}
-\author{Milica Delibašić}
-\date{\today}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[R]{\thepage}\renewcommand{\headrulewidth}{0pt}}
 
+\usepackage{titlesec}
+\titleformat{\chapter}{\normalfont\LARGE\bfseries}{\thechapter.}{0.6em}{}
+\titlespacing*{\chapter}{0pt}{0pt}{1.5em}
+
+% --- Sadržaj, tabele, slike, kod ----------------------------------------
+\usepackage{graphicx}
+\graphicspath{{slike/}}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{listings}
+\input{listings-setup}
+
+% --- Literatura (harvardski stil: autor–godina) -------------------------
+\usepackage{csquotes}
+\usepackage[backend=biber,style=authoryear,maxcitenames=2,uniquelist=false,uniquename=false]{biblatex}
+\addbibresource{literatura.bib}
+
+\usepackage[hidelinks]{hyperref}
+
+% --- Nazivi na srpskom ---------------------------------------------------
+\addto\captionsserbian{%
+  \renewcommand{\chaptername}{Poglavlje}%
+  \renewcommand{\contentsname}{Sadržaj}%
+  \renewcommand{\bibname}{Literatura}%
+  \renewcommand{\listfigurename}{Spisak slika}%
+  \renewcommand{\listtablename}{Spisak tabela}%
+  \renewcommand{\figurename}{Slika}%
+  \renewcommand{\tablename}{Tabela}%
+}
+\renewcommand{\lstlistingname}{Listing}
+
+% --- Radne napomene (uputstva šta ide u sekciju) -------------------------
+% Za finalnu verziju: \napomenefalse — napomene nestaju iz PDF-a.
+\newif\ifnapomene
+\napomenetrue
+\newcommand{\napomena}[1]{\ifnapomene{\par\raggedright\color{gray}\small\itshape [#1]\par}\fi}
+
+\input{metadata}
+
+% =====================================================================
 \begin{document}
-\maketitle
 
-\chapter{Provjera okruženja}
+% --- Uvodni dio (rimski brojevi) ----------------------------------------
+\pagenumbering{roman}
+\input{uvodni/korice}
+\input{uvodni/informacije}
+\input{uvodni/izjava}
+\input{uvodni/izvod}
+\input{uvodni/abstract}
 
-Ovo je probni dokument na srpskom jeziku (latinica), namijenjen provjeri
-MiKTeX i \texttt{LuaLaTeX} instalacije u Cursoru.
+\tableofcontents
+% \listoffigures
+% \listoftables
 
-\section{Šta treba da radi}
+% --- Centralni dio (arapski brojevi) ------------------------------------
+\clearpage
+\pagenumbering{arabic}
 
-\begin{itemize}
-  \item Hifenacija i slova sa dijakritikom: čćžšđ ČĆŽŠĐ
-  \item Monospace font za kod: \texttt{add x1, x2, x3}
-\end{itemize}
+\include{poglavlja/01-uvod}
+\include{poglavlja/02-osnove-arhitektura}
+\include{poglavlja/03-teorija-prevodilaca}
+\include{poglavlja/04-specifikacija-arhitekture}
+\include{poglavlja/05-asemblerski-jezik}
+\include{poglavlja/06-dizajn-implementacija}
+\include{poglavlja/07-prakticna-realizacija}
+\include{poglavlja/08-evaluacija}
+\include{poglavlja/09-zakljucak}
 
-Ako vidite ovaj PDF, okruženje je spremno za pisanje teze.
+% --- 10. Literatura ------------------------------------------------------
+% \nocite{*} prikazuje SVE izvore iz literatura.bib i dok nisu citirani.
+% Ukloniti pred predaju — u spisku ostaju samo citirani izvori.
+\nocite{*}
+\printbibliography[heading=bibnumbered,title={Literatura}]
+
+% --- 11. Prilozi ---------------------------------------------------------
+\include{poglavlja/11-prilozi}
 
 \end{document}

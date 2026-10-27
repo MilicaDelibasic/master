@@ -1,0 +1,86 @@
+\chapter{Prilozi}
+\label{ch:prilozi}
+
+\section{Izvorni kod asemblera}
+\label{sec:prilog-kod}
+\napomena{Kod se uključuje direktno iz \texttt{src/asm/} — uvijek je ažuran.
+Pri kraju rada odlučiti da li ide cio kod ili samo ključni moduli (obim!).}
+
+\lstinputlisting[style=python,caption={\texttt{tokens.py}}]{../../src/asm/tokens.py}
+\lstinputlisting[style=python,caption={\texttt{lexer.py}}]{../../src/asm/lexer.py}
+\lstinputlisting[style=python,caption={\texttt{parser.py}}]{../../src/asm/parser.py}
+\lstinputlisting[style=python,caption={\texttt{ast\_nodes.py}}]{../../src/asm/ast_nodes.py}
+\lstinputlisting[style=python,caption={\texttt{symbols.py}}]{../../src/asm/symbols.py}
+\lstinputlisting[style=python,caption={\texttt{directives.py}}]{../../src/asm/directives.py}
+\lstinputlisting[style=python,caption={\texttt{encode.py}}]{../../src/asm/encode.py}
+\lstinputlisting[style=python,caption={\texttt{assembler.py}}]{../../src/asm/assembler.py}
+\lstinputlisting[style=python,caption={\texttt{output.py}}]{../../src/asm/output.py}
+\lstinputlisting[style=python,caption={\texttt{errors.py}}]{../../src/asm/errors.py}
+\lstinputlisting[style=python,caption={\texttt{cli.py}}]{../../src/asm/cli.py}
+
+\section{Primjeri ulaznih programa}
+\label{sec:prilog-primjeri}
+\napomena{Dodati i odgovarajući \texttt{.hex} izlaz za svaki primjer kad asembler bude gotov.}
+
+\lstinputlisting[style=asm,caption={\texttt{examples/add.asm}}]{../../examples/add.asm}
+\lstinputlisting[style=asm,caption={\texttt{examples/loop.asm}}]{../../examples/loop.asm}
+\lstinputlisting[style=asm,caption={\texttt{examples/memory.asm}}]{../../examples/memory.asm}
+
+\section{Tabela instrukcija i opkodova}
+\label{sec:prilog-tabela}
+\napomena{Nacrt za planirani podskup (izvor: \textcite{waterman2019}); uskladiti sa
+\texttt{encode.py} kad se skup instrukcija konačno utvrdi.}
+
+{\small
+\begin{longtable}{@{}lllll@{}}
+  \caption{Podržane instrukcije RV32I sa opkodovima}\label{tab:opkodovi}\\
+  \toprule
+  Instrukcija & Format & opcode & funct3 & funct7 \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Instrukcija & Format & opcode & funct3 & funct7 \\
+  \midrule
+  \endhead
+  \texttt{add}   & R & 0110011 & 000 & 0000000 \\
+  \texttt{sub}   & R & 0110011 & 000 & 0100000 \\
+  \texttt{sll}   & R & 0110011 & 001 & 0000000 \\
+  \texttt{slt}   & R & 0110011 & 010 & 0000000 \\
+  \texttt{sltu}  & R & 0110011 & 011 & 0000000 \\
+  \texttt{xor}   & R & 0110011 & 100 & 0000000 \\
+  \texttt{srl}   & R & 0110011 & 101 & 0000000 \\
+  \texttt{sra}   & R & 0110011 & 101 & 0100000 \\
+  \texttt{or}    & R & 0110011 & 110 & 0000000 \\
+  \texttt{and}   & R & 0110011 & 111 & 0000000 \\
+  \midrule
+  \texttt{addi}  & I & 0010011 & 000 & --- \\
+  \texttt{xori}  & I & 0010011 & 100 & --- \\
+  \texttt{ori}   & I & 0010011 & 110 & --- \\
+  \texttt{andi}  & I & 0010011 & 111 & --- \\
+  \texttt{lw}    & I & 0000011 & 010 & --- \\
+  \texttt{jalr}  & I & 1100111 & 000 & --- \\
+  \midrule
+  \texttt{sw}    & S & 0100011 & 010 & --- \\
+  \midrule
+  \texttt{beq}   & B & 1100011 & 000 & --- \\
+  \texttt{bne}   & B & 1100011 & 001 & --- \\
+  \texttt{blt}   & B & 1100011 & 100 & --- \\
+  \texttt{bge}   & B & 1100011 & 101 & --- \\
+  \midrule
+  \texttt{lui}   & U & 0110111 & --- & --- \\
+  \texttt{auipc} & U & 0010111 & --- & --- \\
+  \midrule
+  \texttt{jal}   & J & 1101111 & --- & --- \\
+  \bottomrule
+\end{longtable}
+}
+
+\section{Korisničko uputstvo}
+\label{sec:prilog-uputstvo}
+\napomena{Instalacija (Python 3.12, \texttt{pip install -e .}), pokretanje, opcije komandne
+linije, format izlaza, primjeri poruka o greškama.}
+
+\begin{lstlisting}[caption={Osnovno korišćenje asemblera}]
+python -m asm --help
+python -m asm examples/add.asm -o out/
+\end{lstlisting}

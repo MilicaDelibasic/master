@@ -1,0 +1,48 @@
+\chapter{Projektovanje asemblerskog jezika}
+\label{ch:jezik}
+
+\napomena{Specifikacija ulaznog jezika asemblera. 6--8 strana.
+Leksička pravila su već implementirana — vidjeti docstring u \texttt{src/asm/lexer.py}.
+Izvor za sintaksu: \textcite{riscvasm2024}, \textcite{fsf2024}.}
+
+\section{Sintaksa asemblerskog jezika}
+\label{sec:sintaksa}
+\napomena{Leksička pravila (komentari \texttt{\#}, identifikatori, brojevi dec/hex/bin,
+stringovi) i gramatika u EBNF obliku. Nacrt gramatike (uskladiti sa parserom):}
+
+\begin{lstlisting}[caption={Nacrt gramatike asemblerskog jezika (EBNF)},label={lst:ebnf}]
+program     = { line } EOF ;
+line        = [ label ] [ statement ] NEWLINE ;
+label       = IDENT ":" ;
+statement   = directive | instruction ;
+directive   = DIRECTIVE [ operands ] ;
+instruction = IDENT [ operands ] ;
+operands    = operand { "," operand } ;
+operand     = IDENT | INTEGER | STRING | INTEGER "(" IDENT ")" ;
+\end{lstlisting}
+
+\section{Direktive asemblera}
+\label{sec:direktive}
+\napomena{Tabela: \texttt{.text}, \texttt{.data}, \texttt{.word}, \texttt{.byte},
+\texttt{.ascii}, \texttt{.asciiz}, \texttt{.space} — sintaksa i dejstvo na brojač lokacija.}
+
+\section{Oznake (labeli) i simboli}
+\label{sec:labele}
+\napomena{Pravila imenovanja, definicija i upotreba, reference unaprijed,
+greške: duplirana i nedefinisana labela.}
+
+\section{Podržani tipovi instrukcija}
+\label{sec:tipovi-instrukcija}
+\napomena{Sintaksa operanada po formatu (R/I/S/B/U/J) i pseudo-instrukcije
+(\texttt{nop}, \texttt{li}, \texttt{la}, \texttt{mv}, \texttt{j}, \texttt{ret}) i u šta se prevode.}
+
+\section{Pravila pisanja programa}
+\label{sec:pravila}
+\napomena{Jedna naredba po liniji, labela i instrukcija u istoj liniji, velika/mala slova,
+obavezne sekcije.}
+
+\section{Primjeri asemblerskih programa}
+\label{sec:primjeri-programa}
+\napomena{2--3 kratka primjera sa objašnjenjem; ostali su u Prilogu~\ref{sec:prilog-primjeri}.}
+
+\lstinputlisting[style=asm,caption={Primjer programa sa petljom (\texttt{examples/loop.asm})},label={lst:loop}]{../../examples/loop.asm}

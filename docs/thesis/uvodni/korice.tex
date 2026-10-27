@@ -1,0 +1,27 @@
+% Korice i naslovna strana (po Smjernicama naslovna strana je identična koricama).
+% Logo: staviti fajl slike/logo-ucg.png (ili .pdf) — dok ga nema, prikazuje se okvir.
+\begin{titlepage}
+  \centering
+  \IfFileExists{slike/logo-ucg.png}%
+    {\includegraphics[height=3cm]{logo-ucg.png}}%
+    {\fbox{\parbox[c][3cm][c]{3cm}{\centering\small Logo UCG}}}
+  \par\vspace{1em}
+  {\large\MakeUppercase{\RadUniverzitet}\par}
+  {\large\MakeUppercase{\RadFakultet}\par}
+  \vspace{0.5em}
+  {\normalsize \RadStudijskiProgram\par}
+
+  \vfill
+  {\large \RadAutor\par}
+  \vspace{2em}
+  {\LARGE\bfseries \RadNaslov\par}
+  \vspace{1.5em}
+  {\large \MakeUppercase{\RadVrsta}\par}
+  \vfill
+
+  \begin{flushright}
+    Mentor: \RadMentor
+  \end{flushright}
+  \vspace{2em}
+  {\RadMjesto, \RadGodina\par}
+\end{titlepage}

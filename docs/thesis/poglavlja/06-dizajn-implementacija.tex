@@ -1,0 +1,49 @@
+\chapter{Dizajn i implementacija razvijenog asemblerskog prevodioca}
+\label{ch:implementacija}
+
+\napomena{Centralno poglavlje i najveći doprinos rada, 15--20 strana.
+Svaka sekcija odgovara jednom modulu u \texttt{src/asm/}. Prikazivati kratke isječke koda,
+ne cijele fajlove (cijeli kod je u Prilogu~\ref{sec:prilog-kod}).}
+
+\section{Arhitektura softverskog rješenja}
+\label{sec:arhitektura-rjesenja}
+\napomena{Dijagram toka: \texttt{.asm} → Lexer → Parser → Pass~1 (tabela simbola, adrese)
+→ Pass~2 (kodiranje) → \texttt{.bin}/\texttt{.hex}. Tabela modula i odgovornosti.}
+
+\section{Izbor programskog jezika i razvojnih alata}
+\label{sec:alati}
+\napomena{Python 3.12 (čitljivost, standardna biblioteka, bez spoljnih zavisnosti),
+pytest, Git/GitHub, VS Code/Cursor, \LaTeX. Zašto bez generatora parsera.}
+
+\section{Implementacija leksičkog analizatora}
+\label{sec:impl-lexer}
+\napomena{\texttt{lexer.py}: vrste tokena, prolaz znak po znak, lokacije (linija/kolona),
+sažimanje praznih linija u jedan NEWLINE, dekodiranje brojeva i stringova, greške.}
+
+\section{Implementacija parsera}
+\label{sec:impl-parser}
+\napomena{\texttt{parser.py}: rekurzivno spuštanje po gramatici iz Listinga~\ref{lst:ebnf};
+čvorovi \texttt{LabelDef}, \texttt{Directive}, \texttt{Instruction}.}
+
+\section{Tabela simbola}
+\label{sec:impl-simboli}
+\napomena{\texttt{symbols.py}: struktura, definisanje i pretraga, detekcija duplikata.}
+
+\section{Prevođenje instrukcija u mašinski kod}
+\label{sec:impl-kodiranje}
+\napomena{\texttt{encode.py}: tabela opkodova, funkcije za formate, provjera opsega
+neposrednih vrijednosti, PC-relativni pomjeraji za grane i skokove, pseudo-instrukcije.}
+
+\section{Generisanje izlaznog fajla}
+\label{sec:impl-izlaz}
+\napomena{\texttt{output.py}: binarni (little-endian) i heksadecimalni zapis, opciono listing.}
+
+\section{Obrada sintaksnih i semantičkih grešaka}
+\label{sec:impl-greske}
+\napomena{\texttt{errors.py}: hijerarhija grešaka, format \texttt{fajl:linija:kolona: vrsta: poruka},
+primjeri poruka.}
+
+\section{Testiranje funkcionalnosti asemblera}
+\label{sec:impl-testiranje}
+\napomena{Jedinični testovi po modulu, integracioni testovi nad primjerima, testovi grešaka;
+broj testova i pokrivenost.}

@@ -1,0 +1,33 @@
+\chapter{Osnove računarskih arhitektura i asemblera}
+\label{ch:osnove}
+
+\napomena{Teorijsko poglavlje, 8--10 strana. Glavni izvori: \textcite{patterson2020},
+\textcite{hennessy2019}, \textcite{harris2022}, \textcite{waterman2019}.}
+
+\section{Arhitektura računarskih sistema}
+\label{sec:arhitektura-sistema}
+\napomena{Fon Nojmanov model, procesor--memorija--U/I, ciklus dohvati--dekodiraj--izvrši.}
+
+\section{Mašinski jezik i asemblerski jezik}
+\label{sec:masinski-asemblerski}
+\napomena{Binarni zapis instrukcija; mnemonici, simboličke adrese; odnos 1:1 između
+asemblerske i mašinske instrukcije (osim pseudo-instrukcija).}
+
+\section{Instrukcijski skup procesora}
+\label{sec:isa}
+\napomena{Pojam ISA kao ugovora između hardvera i softvera; vrste instrukcija
+(aritmetičke, logičke, memorijske, kontrola toka).}
+
+\section{RISC i CISC arhitekture}
+\label{sec:risc-cisc}
+\napomena{Istorijat, karakteristike, primjeri (x86 vs.\ ARM/MIPS/RISC-V), load/store princip.}
+
+\section{Pregled RISC-V arhitekture}
+\label{sec:risc-v}
+\napomena{Nastanak na Berkliju \parencite{asanovic2014,waterman2016}, otvorenost, modularnost
+(osnovni skup RV32I/RV64I + ekstenzije M, A, F, D, C), zašto je izabrana za ovaj rad.}
+
+\section{Uloga asemblera u procesu prevođenja programa}
+\label{sec:uloga-asemblera}
+\napomena{Lanac izvorni kod → kompajler → asembler → objektni fajl → linker → izvršni fajl.
+Može dijagram (slika).}
